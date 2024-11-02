@@ -6,6 +6,7 @@
 #include<QTcpSocket>
 #include<QFile>
 #include<QProgressDialog>
+#include<QElapsedTimer>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -41,12 +42,20 @@ private:
     QTcpServer* server=nullptr;
     QTcpSocket* client=nullptr;
     QFile* file=nullptr;
+    // 是否正在传输文件
     bool isTransfering=false;
+    // 是否作为发送者在传输文件
     bool isSending=false;
+
     quint64 totalBytes,rstBytes;
     QString fileName;
 
+    //buffer size = 100MB
+    quint64 RecvBufferSize=100*1024*1024;
+    quint64 DataBlockSize=1024*64;
+
     QTimer* sendTimer=nullptr;
+    QElapsedTimer* elpsdTimer=nullptr;
 
     QProgressDialog* pgDilg=nullptr;
 private:
@@ -55,5 +64,6 @@ private slots:
     void newConnection();
     void newData();
     void disconnected();
+    void bytesWritten(qint64 t);
 };
 #endif // MAINWINDOW_H
